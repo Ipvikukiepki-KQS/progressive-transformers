@@ -18,20 +18,65 @@ class DataCustomization(object):
         print(data_path)
         keys = []
         data_access = DataCustomization.dataRead(data_path)
-        if isinstance(data_access,list):
-            print("json as a list")
-            for data in data_access:
-                if isinstance(data,dict):
-                    for items in data:
-                        if isinstance(data[items],str):
-                            print("dict items are strings")
-                        elif isinstance(data[items],list):
-                            print("dict tems are lists")
-                        else:
-                            print("dict items are dict")
 
-                        
-    
+        def checkData(data):
+            if isinstance(data, dict):
+                data = printDictData(data)
+            elif isinstance(data, list):
+                data = printListData(data)
+            elif isinstance(data, str):
+                data = printStrData(data)
+            return data
+
+        def printDictData(dict_data):
+            for items in dict_data:
+                if "goal" in items:
+                    nest_items = dict_data[items]
+                    for elements in nest_items:
+                        if "restaurant" in elements:
+                            check_rest = len(nest_items[elements])
+                            #print("length is", check_rest)
+                        if "hotel" in elements:
+                            check_hotel = len(nest_items[elements])
+                            #print("length is", check_hotel)
+                        if "attraction" in elements:
+                            check_attract = len(nest_items[elements])
+                            #print("length is", check_attract)
+                
+                if "log" in items:
+                    nest_dict = dict_data[items]
+                    for elements in nest_dict:
+                        pass
+                else:
+                    checkData(dict_data[items])    
+        def printListData(list_data):
+            for items in list_data:
+                checkData(items)
+        def printStrData(str_data):
+            print("The string is", str_data)
+            
+        if isinstance(data_access,dict):
+            print("json as a dict")
+            for data in data_access:
+                data = checkData(data_access[data])                        
         else:
             print("recheck")
-            
+
+
+"""
+                    nest_items = dict_data[items]
+                    for elements in nest_items:
+                        if "restaurant" in elements:
+                            check_rest = len(nest_items[elements])
+                            print("length is", check_rest)
+                        if "hotel" in elements:
+                            check_hotel = len(nest_items[elements])
+                            print("length is", check_hotel)
+                        if "attraction" in elements:
+                            check_attract = len(nest_items[elements])
+                            print("length is", check_attract)
+                
+                if "log" in items:
+                    nest_dict = dict_data[items]
+                    for elements in nest_dict:
+                        print(elements)   """               
