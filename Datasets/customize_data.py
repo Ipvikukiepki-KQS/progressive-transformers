@@ -43,12 +43,32 @@ class DataCustomization(object):
                             check_attract = len(nest_items[elements])
                             #print("length is", check_attract)
                 
-                if "log" in items:
-                    nest_dict = dict_data[items]
-                    for elements in nest_dict:
-                        pass
+                if "text" in items:
+                    dialogue = dict_data[items]
+                    print("the text is", dialogue)
+                
+                if "intent" in items:
+                    nest_intent = list(dict_data[items].keys())
+                    print("the intent is", nest_intent)
+                    print("intent entities are", dict_data[items])
+                    int_ent = dict_data[items]
+                    if isinstance(int_ent,dict):
+                        for nest_entities in int_ent:
+                            ent_val = int_ent[nest_entities]
+                            print("entities are", ent_val)
+                            if isinstance(ent_val, list):
+                                for ent_pair in ent_val:
+                                    print("the entities and values are", ent_pair)
+                                    count = 1
+                                    for entity in ent_pair:
+                                        if count == 1:
+                                            print("the entity is", entity)
+                                        if count == 2:
+                                            print("the value is", entity)
+                                        count += 1
                 else:
-                    checkData(dict_data[items])    
+                    checkData(dict_data[items])  
+ 
         def printListData(list_data):
             for items in list_data:
                 checkData(items)
@@ -61,22 +81,3 @@ class DataCustomization(object):
                 data = checkData(data_access[data])                        
         else:
             print("recheck")
-
-
-"""
-                    nest_items = dict_data[items]
-                    for elements in nest_items:
-                        if "restaurant" in elements:
-                            check_rest = len(nest_items[elements])
-                            print("length is", check_rest)
-                        if "hotel" in elements:
-                            check_hotel = len(nest_items[elements])
-                            print("length is", check_hotel)
-                        if "attraction" in elements:
-                            check_attract = len(nest_items[elements])
-                            print("length is", check_attract)
-                
-                if "log" in items:
-                    nest_dict = dict_data[items]
-                    for elements in nest_dict:
-                        print(elements)   """               
