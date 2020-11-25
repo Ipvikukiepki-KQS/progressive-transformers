@@ -17,32 +17,97 @@ class DataCustomization(object):
     def trainData(data_path, out_nlu):
         print(data_path)
         keys = []
-        data_access = DataCustomization.dataRead(data_path)
+        data_access = DataCustomization.dataRead(data_path)        
 
         def checkData(data):
             if isinstance(data, dict):
-                data = printDictData(data)
+                data = checkDictData(data)
             elif isinstance(data, list):
-                data = printListData(data)
+                data = getListData(data)
             elif isinstance(data, str):
                 data = printStrData(data)
             return data
 
-        def printDictData(dict_data):
+        def checkDictData(dict_data):
+            
             for items in dict_data:
                 if "goal" in items:
                     nest_items = dict_data[items]
                     for elements in nest_items:
                         if "restaurant" in elements:
                             check_rest = len(nest_items[elements])
-                            #print("length is", check_rest)
+
                         if "hotel" in elements:
                             check_hotel = len(nest_items[elements])
-                            #print("length is", check_hotel)
+                        
                         if "attraction" in elements:
                             check_attract = len(nest_items[elements])
-                            #print("length is", check_attract)
-                
+                        
+                        if "taxi" in elements:
+                            check_taxi = len(nest_items[elements])
+                        
+                        if "police" in elements:
+                            check_police = len(nest_items[elements])
+                        
+                        if "hospital" in elements:
+                            check_hospital = len(nest_items[elements])
+
+                if "log" in items:
+                    checkData(dict_data[items], count = 1)
+
+            return check_rest, check_hotel, check_attract, check_taxi, check_police, check_hospital
+
+        def getDictData(dict_data, count = 1):
+            checkData(data, count)
+
+        def getListData(list_data):
+            for items in list_data:
+                checkData(items)
+
+        def printStrData(str_data):
+            pass
+            #print("The string is", str_data)
+            
+        if isinstance(data_access,dict):
+            print("json as a dict")
+            for data in data_access:
+                data = checkData(data_access[data], count=0)                        
+        else:
+            print("recheck")
+
+"""
+        def checkDictData(dict_data):
+            check_rest = 0
+            check_hotel = 0
+            check_attract = 0
+            check_taxi = 0
+            check_police = 0
+            check_hospital = 0
+            for items in dict_data:
+                if "goal" in items:
+                    nest_items = dict_data[items]
+                    for elements in nest_items:
+                        if "restaurant" in elements:
+                            check_rest = len(nest_items[elements])
+
+                        if "hotel" in elements:
+                            check_hotel = len(nest_items[elements])
+                        
+                        if "attraction" in elements:
+                            check_attract = len(nest_items[elements])
+                        
+                        if "taxi" in elements:
+                            check_taxi = len(nest_items[elements])
+                        
+                        if "police" in elements:
+                            check_police = len(nest_items[elements])
+                        
+                        if "hospital" in elements:
+                            check_hospital = len(nest_items[elements])
+            return check_rest, check_hotel, check_attract, check_taxi, check_police, check_hospital
+        
+        def getDictData(dict_data):
+            for items in dict_data:
                 if "text" in items:
                     dialogue = dict_data[items]
                     print("the text is", dialogue)
@@ -68,16 +133,4 @@ class DataCustomization(object):
                                         count += 1
                 else:
                     checkData(dict_data[items])  
- 
-        def printListData(list_data):
-            for items in list_data:
-                checkData(items)
-        def printStrData(str_data):
-            print("The string is", str_data)
-            
-        if isinstance(data_access,dict):
-            print("json as a dict")
-            for data in data_access:
-                data = checkData(data_access[data])                        
-        else:
-            print("recheck")
+"""
