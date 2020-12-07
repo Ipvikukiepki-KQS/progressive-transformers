@@ -59,7 +59,6 @@ class DataCustomization(object):
             if C == 1 :
                 if dict_data is not None:
                     if c_R != 0 and  c_H == 0 and c_A == 0 and  c_T == 0 and c_P == 0 and c_HO == 0:
-                        #dict_data = getListData(dict_data, C)
                         for utter_ind, utter_val in enumerate(dict_data):
                             entities = []
                             if utter_ind % 2 == 0:
@@ -127,78 +126,3 @@ class DataCustomization(object):
                 data = checkData(data_access[data], C)                     
         else:
             print("recheck")
-
-"""
- if isinstance(dict_data,list):
-                            dict_data = getListData(dict_data, C)
-                        elif isinstance(dict_data,dict):
-                            dict_data = dict_data
-                        for d_turn in range(1,utter_ind+1):
-                            for items in dict_data:                            
-                                if "text" in items:
-                                    #text_count += 1
-                                    #print("The text count is", text_count)
-                                    dialogue = dict_data[items]
-                                    print("the text is", dialogue)
-                                
-                                if "intent" in items:
-                                    nest_intent = list(dict_data[items].keys())
-                                    print("the intent is", nest_intent)
-
-                                    int_ent = dict_data[items]
-                                    
-                                    if isinstance(int_ent,dict):
-                                        for nest_entities in int_ent:
-                                            ent_val = int_ent[nest_entities]
-
-                                            if isinstance(ent_val, list):
-                                                for ent_pair in ent_val:
-                                                    count = 1
-                                                    for entity in ent_pair:
-                                                        if count == 1:
-                                                            print("the entity is", entity)
-                                                        if count == 2:
-                                                            print("the value is", entity)
-                                                        count += 1  
-"""
-"""
-for items in utter_val:
-                                    if "text" in items:
-                                        dialogue = utter_val[items]
-                                        print("the text is",dialogue)
-                                    if "intent" in items:
-                                        int_ent = utter_val[items]
-                                        for u_int in int_ent:
-                                            user_intent = u_int
-                                            print("intent is", user_intent)
-                                    
-                                        if isinstance(int_ent,dict):
-                                            for nest_entities in int_ent:
-                                                ent_val = int_ent[nest_entities]
-
-                                                if isinstance(ent_val, list):
-                                                    for ent_pair in ent_val:
-                                                        count = 1
-                                                        for entity in ent_pair:
-                                                            if count == 1:
-                                                                print("the entity is", entity)
-                                                            if count == 2:
-                                                                print("the value is", entity)
-                                                            count += 1
-"""
-"""
-        def checkNestData(data):
-            if isinstance(data, list):
-                data = getListData(data)
-            if isinstance(data,str):
-                data = getStrData(data)
-            return data
-
-        def getListData(list_data):
-            for items in list_data:
-                return items
-
-        def getStrData(str_data):
-            if isinstance(str_data,str):
-                return str_data
-"""

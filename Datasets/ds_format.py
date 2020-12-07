@@ -17,7 +17,7 @@ def cli1():
 def format(infile, outnlu, outdm, outnlg):
     print("The annotated data for training will be loaded from: ", infile)
     DC = DataCustomization(infile,outnlu)
-    DC.trainData(infile,outnlu)
+    DC.trainData(infile,outnlu, C = 0)
     #dm_storycreator.DM_Createstory.story_create(infile,outdm)
     #nlg_datacreator.NLG_Createdata.nlg_createdata(infile,outnlg)  
     
