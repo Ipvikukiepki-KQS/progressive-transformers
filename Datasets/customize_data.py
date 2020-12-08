@@ -61,6 +61,7 @@ class DataCustomization(object):
                     if c_R != 0 and  c_H == 0 and c_A == 0 and  c_T == 0 and c_P == 0 and c_HO == 0:
                         for utter_ind, utter_val in enumerate(dict_data):
                             entities = []
+                            text_intent = []
                             if utter_ind % 2 == 0:
                                 for items in utter_val:
                                     if "text" in items:
@@ -70,7 +71,7 @@ class DataCustomization(object):
                                         int_ent = utter_val[items]
                                         for u_int in int_ent:
                                             user_intent = u_int
-                                    
+                                        
                                         if isinstance(int_ent,dict):
                                             for nest_entities in int_ent:
                                                 ent_val = int_ent[nest_entities]
@@ -84,31 +85,36 @@ class DataCustomization(object):
                                                             if count == 2:
                                                                 spec_val = entity
                                                             count += 1
-                                                    if spec_val in ['None','none']:
-                                                        samples['common_examples'].append({
-                                                            "text": dialogue,
-                                                            "intent": "{}".format(user_intent)                                                       
-                                                        })
-                                                    if spec_val not in text:
-                                                        samples['common_examples'].append({
-                                                            "text": dialogue,
-                                                            "intent": "{}".format(user_intent)                    
-                                                        })
-                                                    if spec_val in text:
-                                                        Start = text.find(spec_val)
-                                                        End = Start + len(spec_val)
-                                                        print(Start,End)
-                                                        entities.append({
-                                                            "start":Start,
-                                                            "end":End,
-                                                            "value": spec_val,
-                                                            "entity": spec_entity
-                                                        })
-                                                        samples['common_examples'].append({
-                                                            "text": dialogue,
-                                                            "intent": "{}".format(user_intent),                                     
-                                                            "entities": entities                  
-                                                        })                                                             
+                                                        if spec_val in ['None','none'] or spec_val not in text:
+                                                            text_intent.append({
+                                                                "text": dialogue,
+                                                                "intent": "{}".format(user_intent)
+                                                            })
+                                                        if spec_val in text:
+                                                                Start = text.find(spec_val)
+                                                                End = Start + len(spec_val)
+                                                                entities.append({
+                                                                    "start":Start,
+                                                                    "end":End,
+                                                                    "value": spec_val,
+                                                                    "entity": spec_entity
+                                                                })
+                                    
+                                if len(text_intent)!=0:
+                                    if user_intent in ['Train-Inform','Train-Request']:
+                                        pass
+                                    else:
+                                        samples['common_examples'].append(text_intent)
+                                elif len(entities) != 0:
+                                    if user_intent in ['Train-Inform','Train-Request']:
+                                        pass
+                                    else:
+                                        samples['common_examples'].append({
+                                                "text": dialogue,
+                                                "intent": "{}".format(user_intent),                                     
+                                                "entities": entities                  
+                                            })
+
 
                             if utter_ind % 2 == 1:
                                 pass
@@ -126,3 +132,25 @@ class DataCustomization(object):
                 data = checkData(data_access[data], C)                     
         else:
             print("recheck")
+
+"""
+if spec_val in ['None','none']:
+                                        samples['common_examples'].append({
+                                            "text": dialogue,
+                                            "intent": "{}".format(user_intent)                                                       
+                                        })
+                                    if spec_val not in text:
+                                        samples['common_examples'].append({
+                                            "text": dialogue,
+                                            "intent": "{}".format(user_intent)                    
+                                        })
+                                    if spec_val in text:
+                                        if user_intent in ['Train_Inform','Train_Request']:
+                                            pass
+                                        else:
+                                            samples['common_examples'].append({
+                                                "text": dialogue,
+                                                "intent": "{}".format(user_intent),                                     
+                                                "entities": entities                  
+                                            }) 
+"""
