@@ -16,6 +16,10 @@ class NLGDataCustomization(object):
     @staticmethod
     def trainData(data_path, out_nlg, C):
         greetings = ['general-welcome','general-thank','general-bye','general-reqmore']
+        outliers = ['Train-Inform','Train-Request','Train-Select','Train-OfferBooked','Train-OfferBook']
+
+        with open(out_nlg, "w") as f:
+            pass
 
         data_access = NLGDataCustomization.dataRead(data_path)
 
@@ -93,18 +97,23 @@ class NLGDataCustomization(object):
                                                                 "intent": "{}".format(user_intent)
                                                             })
                                                         if spec_val in text:
-                                                            entities.append({
-                                                                spec_val,
-                                                                spec_entity
-                                                            })
-                                    with open(out_nlg,'a') as f:
-                                        
-                                        if len(text_intent)!=0:
-                                            f.write(f"{user_intent}\t{text} ")
-                                            f.write("\n")
-                                        if len(entities)!=0:
-                                            f.write(f"{user_intent}\t{entities}\t{text}")
-                                            f.write("\n")
+                                                            entities.append(
+                                                                f"{spec_entity} : {spec_val}"
+                                                            )
+                            with open(out_nlg,'a') as f:
+                                
+                                if len(entities)!=0:
+                                    if user_intent in outliers:
+                                        pass
+                                    else:
+                                        f.write(f"{user_intent}\t\t{entities}\t\t{text}")
+                                        f.write("\n")
+                                elif len(text_intent)!=0:
+                                    if user_intent in outliers:
+                                        pass
+                                    else:
+                                        f.write(f"{user_intent}\t\t{text} ")
+                                        f.write("\n")
                                            
         if isinstance(data_access,dict):
             print("json as a dict")
