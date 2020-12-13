@@ -80,42 +80,43 @@ class DMDataCustomization(object):
                                                 u_int = u_int.replace("-","")
                                             user_intent.append(u_int)
                                     if len(user_intent) != 0:
-                                        juser_intent = "+".join(user_intent)
-                                        if utter_ind % 2 == 0:
-                                            with open(out_dm,'a') as f:
-                                                if utter_ind == 0:
-                                                    f.write("\n* Usergreetings\n")
-                                                    f.write(" - generalsystemgreetings\n")
-                                                if juser_intent is not None:
-                                                    f.write(f"* {juser_intent}")
-                                                    f.write("\n")
-                                        elif utter_ind % 2 == 1:
-                                            if juser_intent is not None:
-                                                if isinstance(int_ent,dict):
-                                                    for nest_entities in int_ent:
-                                                        ent_val = int_ent[nest_entities]
+                                        juser_intent = "".join(user_intent)
+                                        
+                                        if juser_intent is not None:
+                                            if isinstance(int_ent,dict):
+                                                for nest_entities in int_ent:
+                                                    ent_val = int_ent[nest_entities]
 
-                                                        if isinstance(ent_val, list):
-                                                            for ent_pair in ent_val:
-                                                                count = 1
-                                                                for entity in ent_pair:
-                                                                    if count == 1:
-                                                                        spec_entity = entity
-                                                                    if count == 2:
-                                                                        spec_val = entity
-                                                                    count += 1
-                                                                if spec_val in ['None','none'] or spec_val not in text:
-                                                                    text_intent.append({
-                                                                        "text": dialogue,
-                                                                        "intent": "{}".format(user_intent)
-                                                                    })
-                                                                if spec_val in text:
-                                                                    entities.append(
-                                                                        f"{spec_entity} : {spec_val}"
-                                                                    )
-                                                with open(out_dm,'a') as f:
+                                                    if isinstance(ent_val, list):
+                                                        for ent_pair in ent_val:
+                                                            count = 1
+                                                            for entity in ent_pair:
+                                                                if count == 1:
+                                                                    spec_entity = entity
+                                                                if count == 2:
+                                                                    spec_val = entity
+                                                                count += 1
+                                                            if spec_val in ['None','none'] or spec_val not in text:
+                                                                text_intent.append({
+                                                                    "text": dialogue,
+                                                                    "intent": "{}".format(user_intent)
+                                                                })
+                                                            if spec_val in text:
+                                                                entities.append(
+                                                                    f"{spec_entity} : {spec_val}"
+                                                                )
+
+                                            with open(out_dm,'a') as f:
+                                                if utter_ind % 2 == 0:                                                
+                                                    if utter_ind == 0:
+                                                        f.write("\n* Usergreetings\n")
+                                                        f.write(" - generalsystemgreetings\n")
+                                                    if juser_intent is not None:
+                                                        f.write(f"* {juser_intent}{entities}")
+                                                        f.write("\n")
+                                                elif utter_ind % 2 == 1:
                                                     if len(entities)!=0:
-                                                        f.write(f" - {juser_intent}\t{entities}")
+                                                        f.write(f" - {juser_intent}{entities}")
                                                         f.write("\n")
                                                     elif len(text_intent)!=0:
                                                         f.write(f" - {juser_intent}")
@@ -127,25 +128,3 @@ class DMDataCustomization(object):
                 data = checkData(data_access[data], C)                     
         else:
             print("recheck")
-
-"""
-if spec_val in ['None','none']:
-                                        samples['common_examples'].append({
-                                            "text": dialogue,
-                                            "intent": "{}".format(user_intent)                                                       
-                                        })
-                                    if spec_val not in text:
-                                        samples['common_examples'].append({
-                                            "text": dialogue,
-                                            "intent": "{}".format(user_intent)                    
-                                        })
-                                    if spec_val in text:
-                                        if user_intent in ['Train_Inform','Train_Request']:
-                                            pass
-                                        else:
-                                            samples['common_examples'].append({
-                                                "text": dialogue,
-                                                "intent": "{}".format(user_intent),                                     
-                                                "entities": entities                  
-                                            }) 
-"""

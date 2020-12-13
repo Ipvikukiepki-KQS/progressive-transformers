@@ -121,25 +121,3 @@ class NLGDataCustomization(object):
                 data = checkData(data_access[data], C)                     
         else:
             print("recheck")
-
-"""
-if spec_val in ['None','none']:
-                                        samples['common_examples'].append({
-                                            "text": dialogue,
-                                            "intent": "{}".format(user_intent)                                                       
-                                        })
-                                    if spec_val not in text:
-                                        samples['common_examples'].append({
-                                            "text": dialogue,
-                                            "intent": "{}".format(user_intent)                    
-                                        })
-                                    if spec_val in text:
-                                        if user_intent in ['Train_Inform','Train_Request']:
-                                            pass
-                                        else:
-                                            samples['common_examples'].append({
-                                                "text": dialogue,
-                                                "intent": "{}".format(user_intent),                                     
-                                                "entities": entities                  
-                                            }) 
-"""
