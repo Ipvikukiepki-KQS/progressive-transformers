@@ -40,6 +40,8 @@ class EncoderDataVectorization(object):
                 for t, word in enumerate(input_text):
                     en_data[i,t, en_ti[word]] = 1.
                 en_data[i, t + 1:, en_ti[' ']] = 1.
+            
+            return en_data, en_intent_sv, en_vocab_size, max_en_sen_len
 
         except:
             if not os.path.exists(data):

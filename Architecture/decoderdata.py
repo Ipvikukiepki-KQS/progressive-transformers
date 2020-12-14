@@ -39,6 +39,8 @@ class decoderDataVectorization(object):
                 for t, word in enumerate(input_text):
                     de_data[i,t, de_intent_sv[word]] = 1.
                 de_data[i, t + 1:, de_intent_sv[' ']] = 1.
+            
+            return de_data, de_intent_sv, de_vocab_size, max_de_sen_len
                                          
         except:
             if not os.path.exists(data):
