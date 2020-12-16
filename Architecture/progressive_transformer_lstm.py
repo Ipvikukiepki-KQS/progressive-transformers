@@ -16,6 +16,7 @@ from keras import backend as K
 from keras import constraints
 from keras import initializers
 from keras import regularizers
+from keras.layers import RNN
 from keras.engine.base_layer import Layer
 from keras.engine.input_spec import InputSpec
 from keras.utils import tf_utils
@@ -288,9 +289,39 @@ class LSTMCell(DropoutRNNCellMixin, Layer):
                     b_tc2 = None
                     b_to2 = None
 
+  def call(self, query, key, value, states, training = None):
+    h_tm1 = states[0]  # previous memory state
+    c_tm1 = states[1]  # previous carry state
 
+    dp_mask = self.get_dropout_mask_for_cell(inputs, training, count=4)
+    rec_dp_mask = self.get_recurrent_dropout_mask_for_cell(
+        h_tm1, training, count=4)
 
-
-
-
+    if self.implementation == 1:
+      if 0 < self.dropout < 1.:
+        q_i = query * dp_mask[0]
+        q_f = query * dp_mask[1]
+        q_c = query * dp_mask[2]
+        q_o = query * dp_mask[3]
+        v_i = value * dp_mask[0]
+        v_f = value * dp_mask[1]
+        v_c = value * dp_mask[2]
+        v_o = value * dp_mask[3]
+        k_i = key * dp_mask[0]
+        k_f = key * dp_mask[1]
+        k_c = key * dp_mask[2]
+        k_o = key * dp_mask[3]
+      else:
+        q_i = query 
+        q_f = query 
+        q_c = query 
+        q_o = query 
+        v_i = value 
+        v_f = value 
+        v_c = value 
+        v_o = value 
+        k_i = key 
+        k_f = key 
+        k_c = key 
+        k_o = key 
 
