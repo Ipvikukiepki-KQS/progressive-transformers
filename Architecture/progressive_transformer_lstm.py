@@ -177,13 +177,30 @@ class LSTMCell(DropoutRNNCellMixin, Layer):
   def build(self, input_shape):
     default_caching_device = _caching_device(self)
     input_dim = input_shape[-1]
-    self.kernel = self.add_weight(
+    self.Qkernel = self.add_weight(
         shape=(input_dim, self.units * 4),
         name='kernel',
         initializer=self.kernel_initializer,
         regularizer=self.kernel_regularizer,
         constraint=self.kernel_constraint,
         caching_device=default_caching_device)
+
+    self.Kkernel = self.add_weight(
+      shape=(input_dim, self.units * 4),
+      name='kernel',
+      initializer=self.kernel_initializer,
+      regularizer=self.kernel_regularizer,
+      constraint=self.kernel_constraint,
+      caching_device=default_caching_device)
+
+    self.Vkernel = self.add_weight(
+        shape=(input_dim, self.units * 4),
+        name='kernel',
+        initializer=self.kernel_initializer,
+        regularizer=self.kernel_regularizer,
+        constraint=self.kernel_constraint,
+        caching_device=default_caching_device)
+    
     self.recurrent_kernel = self.add_weight(
         shape=(self.units, self.units * 4),
         name='recurrent_kernel',
@@ -219,17 +236,21 @@ class LSTMCell(DropoutRNNCellMixin, Layer):
                 if self.use_bias:
                     if self.unit_forget_bias:
                         for i, trained_weights in enumerate(self.forzen_weights):
-                            self.trained_kernel1, self.trained_recurrent_kernel1, self.bias1 = trained_weights
-                        k_ti1, k_tf1, k_tc1, k_to1 = tf.split(self.trained_kernel1, num_or_size_splits=4, axis=1)
+                            self.trained_Qkernel1, self.trained_Kkernel1, self.trained_Vkernel1, self.trained_recurrent_kernel1, self.bias1 = trained_weights
+                        k_qti1, k_qtf1, k_qtc1, k_qto1 = tf.split(self.trained_Qkernel1, num_or_size_splits=4, axis=1)
+                        k_kti1, k_ktf1, k_ktc1, k_kto1 = tf.split(self.trained_Kkernel1, num_or_size_splits=4, axis=1)
+                        k_vti1, k_vtf1, k_vtc1, k_vto1 = tf.split(self.trained_Vkernel1, num_or_size_splits=4, axis=1)
                         b_ti1, b_tf1, b_tc1, b_to1 = tf.split(self.bias1, num_or_size_splits=4, axis=0)
                         rk_ti1 = self.trained_recurrent_kernel1[:, : self.units]
                         rk_tf1 = self.trained_recurrent_kernel1[:,self.units:self.units*2]
                         rk_tc1 = self.trained_recurrent_kernel1[:,self.units*2:self.units*3]
                         rk_to1 = self.trained_recurrent_kernel1[:,self.units*3:]
                 else:
-                    self.trained_kernel1, self.trained_recurrent_kernel1 = trained_weights
+                    self.trained_Qkernel1,self.trained_Kkernel1,self.trained_Vkernel1, self.trained_recurrent_kernel1 = trained_weights
                     self.bias1 = None
-                    k_ti1, k_tf1, k_tc1, k_to1 = tf.split(self.trained_kernel1, num_or_size_splits=4, axis=1)
+                    k_qti1, k_qtf1, k_qtc1, k_qto1 = tf.split(self.trained_Qkernel1, num_or_size_splits=4, axis=1)
+                    k_kti1, k_ktf1, k_ktc1, k_kto1 = tf.split(self.trained_Kkernel1, num_or_size_splits=4, axis=1)
+                    k_vti1, k_vtf1, k_vtc1, k_vto1 = tf.split(self.trained_Vkernel1, num_or_size_splits=4, axis=1)
                     b_ti1 = None
                     b_tf1 = None 
                     b_tc1 = None 
@@ -243,18 +264,22 @@ class LSTMCell(DropoutRNNCellMixin, Layer):
                     if self.unit_forget_bias:
                         for i, trained_weights in enumerate(self.forzen_weights):
                             if i == 1:
-                                self.trained_kernel1, self.trained_recurrent_kernel1, self.bias1 = trained_weights
+                                self.trained_Qkernel1, self.trained_Kkernel1, self.trained_Vkernel1, self.trained_recurrent_kernel1, self.bias1 = trained_weights
                             if i == 2:
-                                self.trained_kernel2, self.trained_recurrent_kernel2, self.bias2 = trained_weights
+                                self.trained_Qkernel2, self.trained_Kkernel2, self.trained_Vkernel2, self.trained_recurrent_kernel2, self.bias2 = trained_weights
 
-                        k_ti1, k_tf1, k_tc1, k_to1 = tf.split(self.trained_kernel1, num_or_size_splits=4, axis=1)
+                        k_qti1, k_qtf1, k_qtc1, k_qto1 = tf.split(self.trained_Qkernel1, num_or_size_splits=4, axis=1)
+                        k_kti1, k_ktf1, k_ktc1, k_kto1 = tf.split(self.trained_Kkernel1, num_or_size_splits=4, axis=1)
+                        k_vti1, k_vtf1, k_vtc1, k_vto1 = tf.split(self.trained_Vkernel1, num_or_size_splits=4, axis=1)
                         b_ti1, b_tf1, b_tc1, b_to1 = tf.split(self.bias1, num_or_size_splits=4, axis=0)
                         rk_ti1 = self.trained_recurrent_kernel1[:, : self.units]
                         rk_tf1 = self.trained_recurrent_kernel1[:,self.units:self.units*2]
                         rk_tc1 = self.trained_recurrent_kernel1[:,self.units*2:self.units*3]
                         rk_to1 = self.trained_recurrent_kernel1[:,self.units*3:]
 
-                        k_ti2, k_tf2, k_tc2, k_to2 = tf.split(self.trained_kernel2, num_or_size_splits=4, axis=1)
+                        k_qti2, k_qtf2, k_qtc2, k_qto2 = tf.split(self.trained_Qkernel2, num_or_size_splits=4, axis=1)
+                        k_kti2, k_ktf2, k_ktc2, k_kto2 = tf.split(self.trained_Kkernel2, num_or_size_splits=4, axis=1)
+                        k_vti2, k_vtf2, k_vtc2, k_vto2 = tf.split(self.trained_Vkernel2, num_or_size_splits=4, axis=1)
                         b_ti2, b_tf2, b_tc2, b_to2 = tf.split(self.bias1, num_or_size_splits=4, axis=0)                  
                         rk_ti2 = self.trained_recurrent_kernel2[:, : self.units]
                         rk_tf2 = self.trained_recurrent_kernel2[:,self.units:self.units*2]
@@ -263,19 +288,23 @@ class LSTMCell(DropoutRNNCellMixin, Layer):
                 else:
                     for i, trained_weights in enumerate(self.forzen_weights):
                             if i == 1:
-                                self.trained_kernel1, self.trained_recurrent_kernel1 = trained_weights
+                                self.trained_Qkernel1, self.trained_Kkernel1, self.trained_Vkernel1, self.trained_recurrent_kernel1, self.bias1 = trained_weights
                                 self.bias1 = None
                             if i == 2:
-                                self.trained_kernel2, self.trained_recurrent_kernel2 = trained_weights
+                                self.trained_Qkernel2, self.trained_Kkernel2, self.trained_Vkernel2, self.trained_recurrent_kernel2, self.bias2 = trained_weights
                                 self.bias2 = None
                     
-                    k_ti1, k_tf1, k_tc1, k_to1 = tf.split(self.trained_kernel1, num_or_size_splits=4, axis=1)
+                    k_qti1, k_qtf1, k_qtc1, k_qto1 = tf.split(self.trained_Qkernel1, num_or_size_splits=4, axis=1)
+                    k_kti1, k_ktf1, k_ktc1, k_kto1 = tf.split(self.trained_Kkernel1, num_or_size_splits=4, axis=1)
+                    k_vti1, k_vtf1, k_vtc1, k_vto1 = tf.split(self.trained_Vkernel1, num_or_size_splits=4, axis=1)
                     rk_ti1 = self.trained_recurrent_kernel1[:, : self.units]
                     rk_tf1 = self.trained_recurrent_kernel1[:,self.units:self.units*2]
                     rk_tc1 = self.trained_recurrent_kernel1[:,self.units*2:self.units*3]
                     rk_to1 = self.trained_recurrent_kernel1[:,self.units*3:]
 
-                    k_ti2, k_tf2, k_tc2, k_to2 = tf.split(self.trained_kernel2, num_or_size_splits=4, axis=1)
+                    k_qti2, k_qtf2, k_qtc2, k_qto2 = tf.split(self.trained_Qkernel2, num_or_size_splits=4, axis=1)
+                    k_kti2, k_ktf2, k_ktc2, k_kto2 = tf.split(self.trained_Kkernel2, num_or_size_splits=4, axis=1)
+                    k_vti2, k_vtf2, k_vtc2, k_vto2 = tf.split(self.trained_Vkernel2, num_or_size_splits=4, axis=1)
                     rk_ti2 = self.trained_recurrent_kernel2[:, : self.units]
                     rk_tf2 = self.trained_recurrent_kernel2[:,self.units:self.units*2]
                     rk_tc2 = self.trained_recurrent_kernel2[:,self.units*2:self.units*3]
